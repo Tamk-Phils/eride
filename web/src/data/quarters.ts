@@ -1,0 +1,5 @@
+export const BAMENDA_QUARTERS = [
+  "Alalie", "Atieba", "Atielah", "Atielah-Mbelewa", "Atiesu", "Atiesu-Mbessi", "Bayelle", "Bayelle I", "Bayelle II", "Bayelle III", "Bayelle IV", "Bayelle Manda", "Bujong-Mambu", "Futru I", "Futru II", "Lower Menteh", "Upper Menteh", "Manka-Mambu", "Mbefi-Mambu", "Mbelem", "Mbeso-Mambu", "Mbung", "Menjung", "Menka-Menda", "Mubang", "Mugheb", "Nchang", "Njejefor", "Njengang", "Nkwenjang", "Nkwesi", "Ntaghem I", "Ntaghem II", "Ntakeka", "Ntambang", "Ntambru", "Ntamuche", "Ntasen", "Ntefinki", "Ntela", "Ntenetene", "Ntenjung-Mbessi", "Ntensu-Mbelewa", "Sisia I", "Sisia II", "Sisia III", "Sisia IV", "Teken", "Town Green",
+  "Mokop", "Mubakuh", "Terrekoh", "Chamkoh", "Ntaw", "Wumsei", "Wumkien", "Tarri", "Njimben",
+  "Mankon", "Ntarikon", "Ntamulung", "Musang", "Mulang", "Azire", "Atu-Azire", "Alakuma", "Atuakom", "Chindeh", "Lower Ngomgham", "Upper Ngomgham", "Mbinkfibil", "Nitop I", "Nitop II", "Nitop III", "Nitop IV", "Ntambe", "Abang", "Awing", "Bambui", "Bambili"
+];

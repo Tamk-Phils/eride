@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>eRide Admin Portal</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #FAFAFA; margin: 0; padding: 2rem; color: #1A1A1A; }
+    h1 { margin-top: 0; }
+    .card { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 1rem; }
+    .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px; }
+    .btn-approve { background: #1A1A1A; color: white; margin-right: 8px; }
+    .btn-reject { background: #FFE5E5; color: #FF3B30; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
+    .badge { display: inline-block; padding: 4px 8px; background: #F5F5F5; border-radius: 4px; font-size: 12px; font-weight: 600; margin-bottom: 8px; }
+    
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: #FFFFFF; padding: 1.5rem; border-radius: 12px; border: 1px solid #EAEAEA; display: flex; flex-direction: column; align-items: flex-start; }
+    .stat-value { font-size: 2rem; font-weight: 800; color: #1A1A1A; margin-top: 0.5rem; }
+    .stat-label { font-size: 0.875rem; color: #666; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+    .section-title { margin-top: 2rem; margin-bottom: 1rem; border-bottom: 2px solid #EAEAEA; padding-bottom: 0.5rem; }
+  </style>
+</head>
+<body>
+  <div style="display: flex; align-items: center; margin-bottom: 20px;">
+    <h1 style="margin: 0;">eRide Admin Dashboard</h1>
+  </div>
+  
+  <div class="stats-grid" id="stats-container">
+    <div class="stat-card"><span class="stat-label">Loading Stats...</span></div>
+  </div>
+
+  <h2 class="section-title">Active Rides</h2>
+  <div class="grid" id="rides-list">
+    <p>Loading active rides...</p>
+  </div>
+
+  <h2 class="section-title">Pending Driver Approvals</h2>
+  <div class="grid" id="drivers-list">
+    <p>Loading drivers...</p>
+  </div>
+
+  <script>
+    async function loadDrivers() {
+      const res = await fetch('/api/admin/drivers');
+      const drivers = await res.json();
+      const list = document.getElementById('drivers-list');
+      
+      if (drivers.length === 0) {
+        list.innerHTML = '<p>No pending drivers at the moment.</p>';
+        return;
+      }
+      
+      list.innerHTML = drivers.map(d => `
+        <div class="card" id="driver-${d.id}">
+          <span class="badge">${d.role}</span>
+          <h3>${d.name}</h3>
+          <p><strong>Email:</strong> ${d.email}</p>
+          <p><strong>Phone:</strong> ${d.phone}</p>
+          ${d.vehicle ? `
+            <hr style="border: 0; border-top: 1px solid #EAEAEA; margin: 12px 0;">
+            <p><strong>Vehicle:</strong> ${d.vehicle.make} ${d.vehicle.model}</p>
+            <p><strong>Plate:</strong> ${d.vehicle.licensePlate}</p>
+            <p><strong>Type:</strong> ${d.vehicle.type}</p>
+          ` : '<p>No vehicle details provided.</p>'}
+          <div style="margin-top: 16px;">
+            <button class="btn btn-approve" onclick="updateStatus('${d.id}', 'approve')">Approve</button>
+            <button class="btn btn-reject" onclick="updateStatus('${d.id}', 'reject')">Reject</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function loadStats() {
+      try {
+        const res = await fetch('/api/admin/stats');
+        const stats = await res.json();
+        const container = document.getElementById('stats-container');
+        
+        container.innerHTML = `
+          <div class="stat-card">
+            <span class="stat-label">Total Riders</span>
+            <span class="stat-value">${stats.totalRiders}</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Total Drivers</span>
+            <span class="stat-value">${stats.totalDrivers}</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Drivers Online</span>
+            <span class="stat-value" style="color: #34C759">${stats.onlineDrivers}</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Completed Rides</span>
+            <span class="stat-value">${stats.completedRides} / ${stats.totalRides}</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Total Revenue</span>
+            <span class="stat-value">${stats.totalRevenue.toLocaleString()} XAF</span>
+          </div>
+        `;
+      } catch (e) {
+        console.error('Failed to load stats', e);
+      }
+    }
+
+    async function loadActiveRides() {
+      try {
+        const res = await fetch('/api/admin/active-rides');
+        const rides = await res.json();
+        const list = document.getElementById('rides-list');
+        
+        if (!rides || rides.length === 0) {
+          list.innerHTML = '<p>No active rides at the moment.</p>';
+          return;
+        }
+        
+        list.innerHTML = rides.map(r => `
+          <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="badge" style="background: ${r.status === 'PENDING' ? '#FFE5E5' : r.status === 'ARRIVED' ? '#E5E5EA' : '#E5F3FF'}; color: ${r.status === 'PENDING' ? '#FF3B30' : r.status === 'ARRIVED' ? '#666' : '#007AFF'};">
+                ${r.status}
+              </span>
+              <span style="font-weight: bold;">${r.estimatedFare} XAF</span>
+            </div>
+            <p style="margin: 12px 0 4px 0; font-size: 14px;"><strong>Rider:</strong> ${r.rider ? r.rider.name : 'Unknown'}</p>
+            <p style="margin: 0 0 12px 0; font-size: 14px;"><strong>Driver:</strong> ${r.driver ? r.driver.name : 'Searching...'}</p>
+            <div style="background: #F9F9F9; padding: 8px; border-radius: 6px; font-size: 12px; color: #666;">
+              <div><strong>From:</strong> ${r.pickupLocation.address || 'Location'}</div>
+              <div style="margin-top: 4px;"><strong>To:</strong> ${r.dropoffLocation.address || 'Location'}</div>
+            </div>
+          </div>
+        `).join('');
+      } catch (e) {
+        console.error('Failed to load rides', e);
+      }
+    }
+
+    async function updateStatus(id, action) {
+      if (!confirm(`Are you sure you want to ${action} this driver?`)) return;
+      await fetch(`/api/admin/drivers/${id}/${action}`, { method: 'PATCH' });
+      loadDrivers();
+    }
+
+    // Initial Load
+    loadDrivers();
+    loadStats();
+    loadActiveRides();
+
+    setInterval(() => {
+      loadStats();
+      loadActiveRides();
+    }, 5000); // Auto-refresh stats every 5s
+  </script>
+</body>
+</html>

@@ -1,0 +1,223 @@
+:root {
+  --primary: #FFD700;
+  --secondary: #1A1A1A;
+  --background: #0D0D0D;
+  --surface: #1E1E1E;
+  --text: #FFFFFF;
+  --text-dim: #999999;
+  --accent: #34C759;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--background);
+  color: var(--text);
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+#root {
+  height: 100%;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+}
+
+.map-container {
+  flex: 1;
+  z-index: 1;
+}
+
+.overlay-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: auto;
+}
+
+.logo-card {
+  background: rgba(30, 30, 30, 0.8);
+  backdrop-filter: blur(10px);
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+.logo-text {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: 1px;
+}
+
+.bottom-sheet {
+  margin-top: auto;
+  background: var(--surface);
+  border-radius: 24px 24px 0 0;
+  padding: 24px;
+  pointer-events: auto;
+  box-shadow: 0 -10px 25px rgba(0,0,0,0.5);
+  transition: transform 0.3s ease;
+}
+
+.search-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.input-wrapper {
+  position: relative;
+  background: #2A2A2A;
+  border-radius: 12px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.input-wrapper input {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 16px;
+  flex: 1;
+  outline: none;
+}
+
+.suggestions-list {
+  background: #2A2A2A;
+  border-radius: 12px;
+  margin-top: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.suggestion-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid #3A3A3A;
+  cursor: pointer;
+}
+
+.suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.primary-button {
+  background: var(--primary);
+  color: var(--secondary);
+  padding: 16px;
+  border-radius: 14px;
+  font-size: 18px;
+  font-weight: 800;
+  border: none;
+  margin-top: 16px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  width: 100%;
+}
+
+.primary-button:active {
+  opacity: 0.8;
+}
+
+.demo-badge {
+  background: #FF3B30;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: bold;
+  margin-left: 8px;
+}
+
+.ride-status-card {
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.driver-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  background: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--secondary);
+}
+
+.driver-details {
+  flex: 1;
+}
+
+.driver-name {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.car-details {
+  font-size: 14px;
+  color: var(--text-dim);
+}
+
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+  background: #111 !important;
+}
+
+.custom-marker {
+  filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5));
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 215, 0, 0.1);
+  border-left-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+

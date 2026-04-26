@@ -1,0 +1,131 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  RIDER
+  DRIVER
+  ADMIN
+}
+
+enum UserStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum VehicleType {
+  ECONOMY
+  STANDARD
+  PREMIUM
+}
+
+enum RideStatus {
+  PENDING
+  ACCEPTED
+  ARRIVED
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+enum PaymentMethod {
+  NKWAPAY
+  MTN
+  ORANGE
+  CASH
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  phone     String   @unique
+  password  String
+  role      Role       @default(RIDER)
+  status    UserStatus @default(APPROVED)
+  rating    Float      @default(5.0)
+  isOnline  Boolean    @default(false)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  vehicle       Vehicle?
+
+  ridesAsRider  Ride[]    @relation("RiderRides")
+  ridesAsDriver Ride[]    @relation("DriverRides")
+  payments      Payment[]
+  sentMessages  Message[] @relation("SentMessages")
+}
+
+model Ride {
+  id              String        @id @default(uuid())
+  riderId         String
+  rider           User          @relation("RiderRides", fields: [riderId], references: [id])
+  driverId        String?
+  driver          User?         @relation("DriverRides", fields: [driverId], references: [id])
+  status          RideStatus    @default(PENDING)
+  pickupLocation  Json
+  dropoffLocation Json
+  estimatedFare   Float
+  actualFare      Float?
+  paymentMethod   PaymentMethod @default(CASH)
+  paymentStatus   PaymentStatus @default(PENDING)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  riderRating     Float?
+  driverRating    Float?
+  review          String?
+  requestedType   VehicleType   @default(STANDARD)
+
+  payments Payment[]
+  messages Message[]
+}
+
+model Vehicle {
+  id           String      @id @default(uuid())
+  driverId     String      @unique
+  driver       User        @relation(fields: [driverId], references: [id])
+  make         String
+  model        String
+  licensePlate String      @unique
+  type         VehicleType @default(STANDARD)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+model Payment {
+  id             String        @id @default(uuid())
+  userId         String
+  user           User          @relation(fields: [userId], references: [id])
+  rideId         String
+  ride           Ride          @relation(fields: [rideId], references: [id])
+  amount         Float
+  currency       String        @default("XAF")
+  method         PaymentMethod
+  mno            String?       // MTN or ORANGE
+  status         PaymentStatus @default(PENDING)
+  transactionRef String?       @unique
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  rideId    String
+  ride      Ride     @relation(fields: [rideId], references: [id])
+  senderId  String
+  sender    User     @relation("SentMessages", fields: [senderId], references: [id])
+  content   String
+  createdAt DateTime @default(now())
+}
