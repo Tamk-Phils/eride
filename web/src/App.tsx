@@ -7,17 +7,7 @@ import './App.css';
 import { BAMENDA_QUARTERS } from './data/quarters';
 import { useAuthStore } from './store/useAuthStore';
 
-// Fix for Leaflet default icon issues in React
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: markerIcon2x,
-  iconUrl: markerIcon,
-  shadowUrl: markerShadow,
-});
+// Custom icons used instead of default leaflet markers
 
 const CAR_ICON = L.icon({
   iconUrl: 'https://cdn-icons-png.flaticon.com/512/3202/3202926.png',
