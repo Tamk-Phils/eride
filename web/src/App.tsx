@@ -127,6 +127,22 @@ export default function App() {
     setDropoff('');
   };
 
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    window.onerror = (msg) => setError(String(msg));
+  }, []);
+
+  if (error) {
+    return (
+      <div style={{ background: '#000', color: '#FF3B30', padding: 20, height: '100vh' }}>
+        <h2>System Error</h2>
+        <pre>{error}</pre>
+        <button onClick={() => window.location.reload()}>Reload</button>
+      </div>
+    );
+  }
+
   return (
     <div className="app-container">
       <div className="map-container">
