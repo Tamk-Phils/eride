@@ -11,6 +11,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <script>
+      window.addEventListener('error', function(event) {
+        document.getElementById('root').innerHTML = '<div style="background: #000; color: #FF3B30; padding: 20px; font-family: monospace;"><h3>Fatal JS Error</h3><p>' + event.message + '</p><p>Line: ' + event.lineno + ' Col: ' + event.colno + '</p></div>';
+      });
+      window.addEventListener('unhandledrejection', function(event) {
+        document.getElementById('root').innerHTML = '<div style="background: #000; color: #FF3B30; padding: 20px; font-family: monospace;"><h3>Unhandled Promise Rejection</h3><p>' + event.reason + '</p></div>';
+      });
+    </script>
   </head>
   <body>
     <div id="root">
